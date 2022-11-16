@@ -23,6 +23,7 @@ class ClassroomRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+        // must do this in order to validate json
         $this->merge([
             'lecturers_list' => json_decode($this->input('lecturers_list'), true)
         ]);

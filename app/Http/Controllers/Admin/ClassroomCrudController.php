@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ClassroomRequest;
+use App\Models\Classroom;
 use App\Models\Department;
 use App\Models\Room;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -20,6 +21,7 @@ class ClassroomCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\BulkCloneOperation { bulkClone as traitBulkClone; }
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -58,11 +60,11 @@ class ClassroomCrudController extends CrudController
                     return backpack_url('course-program/'.$related_key.'/show');
                 },
             ]);
-        CRUD::column('start_date');
-        CRUD::column('end_date');
+        CRUD::column('start_date')->type('date');
+        CRUD::column('end_date')->type('date');
         CRUD::column('batch');
-        CRUD::column('year');
-        CRUD::column('semester');
+        // CRUD::column('year');
+        // CRUD::column('semester');
         CRUD::column('status');
         CRUD::column('students')->type('closure')
             ->function(function ($entry) {
@@ -130,7 +132,7 @@ class ClassroomCrudController extends CrudController
         CRUD::field('room_id')->type('select2')
             ->entity('room')
             ->attribute('room_number')
-            ->options((function ($query) { return $query->where('occupied', false)->get(); }))
+            // ->options((function ($query) { return $query->where('occupied', false)->get(); }))
             ->size(3);
         CRUD::field('course_program_id')->type('select2')
             ->entity('courseProgram')
@@ -191,9 +193,38 @@ class ClassroomCrudController extends CrudController
     {
         $lecturers = collect(json_decode(request('lecturers_list'), true));
 
+        // TODO: 
+        // 1. check if there's current
+        // 2. check if there's date overlap
+        if (request('status') == 'current' && 
+            Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->exists()) {
+            return back()->withErrors(['room_id' => 'There is already an ongoing class for the same room.'])->withInput();
+        }
+        else if (request('start_date') != null && 
+                Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->where('end_date', '>=', request('start_date'))
+                    ->exists()) {
+            return back()->withErrors(['start_date' => 'The date overlaps with ongoing class. Please check again.'])->withInput();
+        }
+
         $response = $this->traitStore();
         
         $this->crud->entry->lecturers()->sync($lecturers);
+
+        // Update room status
+        if (request('status') == 'current' && 
+            Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->exists()) {
+            $this->crud->entry->room->occupied = true;
+        }
+        else {
+            $this->crud->entry->room->occupied = false;
+        }
+        $this->crud->entry->push(); 
 
         return $response;
     }
@@ -206,6 +237,36 @@ class ClassroomCrudController extends CrudController
         
         $this->crud->entry->lecturers()->detach();
         $this->crud->entry->lecturers()->attach($lecturers);
+
+        // Validate date overlap
+        if (request('status') == 'current' && 
+            Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->where('id', '!=', $this->crud->entry->id) // ignore self
+                    ->exists()) {
+            return back()->withErrors(['room_id' => 'There is already an ongoing class for the same room.'])->withInput();
+        }
+        else if (request('start_date') != null && 
+                Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->where('end_date', '>', request('start_date'))
+                    ->where('start_date', '<', request('start_date')) // prevents error when updating dates past current class
+                    ->where('id', '!=', $this->crud->entry->id) // ignore self
+                    ->exists()) {
+            return back()->withErrors(['start_date' => 'The date overlaps with ongoing class. Please check again.'])->withInput();
+        }
+
+        // Update room status
+        if (request('status') == 'current' && 
+            Classroom::where('room_id', request('room_id'))
+                    ->where('status', 'current')
+                    ->exists()) {
+            $this->crud->entry->room->occupied = true;
+        }
+        else {
+            $this->crud->entry->room->occupied = false;
+        }
+        $this->crud->entry->push(); 
 
         return $response;
     }
@@ -254,5 +315,32 @@ class ClassroomCrudController extends CrudController
                 'name' => 'Name',
                 'birthdate' => 'Birthdate'
             ]);
+    }
+
+    public function bulkClone()
+    {
+        $this->crud->hasAccessOrFail('bulkClone');
+
+        $entries = request()->input('entries', []);
+        $clonedEntries = [];
+
+        foreach ($entries as $key => $id) {
+            if ($entry = $this->crud->model->find($id)) {
+                $clone = $entry->replicate()->fill([
+                    'start_date' => date('Y-m-d'),
+                    'end_date' => date('Y-m-d', strtotime('tomorrow')),
+                    'status' => 'inactive'
+                ]);
+                $clone->push();
+
+                $lecturers = $entry->lecturers->map(function($lecturer) {
+                    return ['lecturer_id' => $lecturer->id, 'order' => $lecturer->pivot->order];
+                });
+                $clone->lecturers()->attach($lecturers); 
+                $clonedEntries[] = $clone;
+            }
+        }
+
+        return $clonedEntries;
     }
 }

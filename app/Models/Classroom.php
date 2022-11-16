@@ -47,7 +47,7 @@ class Classroom extends Model
      */
     public function replicate(array $except = null)
     {
-        $clone = parent::replicate();
+        $clone = parent::replicate($except);
         $clone->name .= ' (copy)';
         return $clone;
     }
