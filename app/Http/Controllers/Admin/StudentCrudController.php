@@ -42,7 +42,7 @@ class StudentCrudController extends CrudController
         CRUD::column('name');
         CRUD::column('email');
         CRUD::column('phone');
-        CRUD::column('birthdate');
+        CRUD::column('birthdate')->type('date');
         CRUD::column('place_of_birth');
         CRUD::column('address');
 
