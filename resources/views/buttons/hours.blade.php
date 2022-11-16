@@ -1,0 +1,2 @@
+
+<a class="btn btn-sm btn-secondary" href="{{ url($crud->route.'/'.$entry->getKey().'/hours') }}" data-toggle="tooltip" title="See this lecturer's work hours."><i class="la la-stopwatch"></i> Work Hours</a>

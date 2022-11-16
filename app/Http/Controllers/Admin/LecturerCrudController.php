@@ -20,6 +20,7 @@ class LecturerCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\BulkCloneOperation;
+    use \App\Http\Controllers\Admin\Operations\HoursOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -46,7 +47,7 @@ class LecturerCrudController extends CrudController
         CRUD::column('email');
         CRUD::column('phone');
         CRUD::column('address');
-        // CRUD::column('birthdate');
+        // CRUD::column('birthdate')->type('date');
         // CRUD::column('place_of_birth');
 
         CRUD::filter('department_id')
@@ -58,11 +59,11 @@ class LecturerCrudController extends CrudController
                 $this->crud->addClause('where', 'department_id', $value);
             })->apply();
 
-        CRUD::button('getWorkHours')
-            ->stack('line')
-            ->type('model_function')
-            ->content('getWorkHours')
-            ->makeFirst();
+        // CRUD::button('getWorkHours')
+        //     ->stack('line')
+        //     ->type('model_function')
+        //     ->content('getWorkHours')
+        //     ->makeFirst();
             
         /**
          * Columns can be defined using the fluent syntax or array syntax:
