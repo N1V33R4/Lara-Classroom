@@ -46,8 +46,8 @@ class StudentGroupCrudController extends CrudController
     {
         CRUD::column('name');
         CRUD::column('batch');
-        CRUD::column('year');
-        CRUD::column('semester');
+        // CRUD::column('year');
+        // CRUD::column('semester');
         CRUD::column('department_id');
         CRUD::column('classroom_id');
         CRUD::column('shift_id');
