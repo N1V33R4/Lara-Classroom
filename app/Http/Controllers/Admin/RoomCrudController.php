@@ -41,7 +41,12 @@ class RoomCrudController extends CrudController
     {
         CRUD::column('name');
         CRUD::column('room_number');
-        CRUD::column('occupied')->type('boolean');
+        CRUD::column('occupied')->type('boolean')
+            ->wrapper([
+                'href' => function ($crud, $column, $entry) {
+                    return backpack_url('classroom?room_id='.$entry->id);
+                },
+            ]);
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
