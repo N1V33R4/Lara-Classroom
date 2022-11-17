@@ -22,10 +22,10 @@ class ClassroomCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\BulkCloneOperation { bulkClone as traitBulkClone; }
-
+    use \Backpack\CRUD\app\Http\Controllers\Operations\BulkDeleteOperation;
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -37,7 +37,7 @@ class ClassroomCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -109,17 +109,20 @@ class ClassroomCrudController extends CrudController
             })
             ->whenActive(function($value) {
                 $this->crud->addClause('where', 'status', $value);
-            })->apply();    
+            })->apply();
+
+        $this->crud->enableExportButtons();//for Export
+        $this->crud->disableResponsiveTable();// for Responsive Table
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
          */
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -170,17 +173,17 @@ class ClassroomCrudController extends CrudController
             ->init_rows(5)
             ->min_rows(5)
             ->max_rows(5);
-            
+
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         * - CRUD::addField(['name' => 'price', 'type' => 'number']));
          */
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
@@ -193,16 +196,16 @@ class ClassroomCrudController extends CrudController
     {
         $lecturers = collect(json_decode(request('lecturers_list'), true));
 
-        // TODO: 
+        // TODO:
         // 1. check if there's current
         // 2. check if there's date overlap
-        if (request('status') == 'current' && 
+        if (request('status') == 'current' &&
             Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->exists()) {
             return back()->withErrors(['room_id' => 'There is already an ongoing class for the same room.'])->withInput();
         }
-        else if (request('start_date') != null && 
+        else if (request('start_date') != null &&
                 Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->where('end_date', '>=', request('start_date'))
@@ -211,11 +214,11 @@ class ClassroomCrudController extends CrudController
         }
 
         $response = $this->traitStore();
-        
+
         $this->crud->entry->lecturers()->sync($lecturers);
 
         // Update room status
-        if (request('status') == 'current' && 
+        if (request('status') == 'current' &&
             Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->exists()) {
@@ -224,7 +227,7 @@ class ClassroomCrudController extends CrudController
         else {
             $this->crud->entry->room->occupied = false;
         }
-        $this->crud->entry->push(); 
+        $this->crud->entry->push();
 
         return $response;
     }
@@ -234,19 +237,19 @@ class ClassroomCrudController extends CrudController
         $lecturers = collect(json_decode(request('lecturers_list'), true));
 
         $response = $this->traitUpdate();
-        
+
         $this->crud->entry->lecturers()->detach();
         $this->crud->entry->lecturers()->attach($lecturers);
 
         // Validate date overlap
-        if (request('status') == 'current' && 
+        if (request('status') == 'current' &&
             Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->where('id', '!=', $this->crud->entry->id) // ignore self
                     ->exists()) {
             return back()->withErrors(['room_id' => 'There is already an ongoing class for the same room.'])->withInput();
         }
-        else if (request('start_date') != null && 
+        else if (request('start_date') != null &&
                 Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->where('end_date', '>', request('start_date'))
@@ -257,7 +260,7 @@ class ClassroomCrudController extends CrudController
         }
 
         // Update room status
-        if (request('status') == 'current' && 
+        if (request('status') == 'current' &&
             Classroom::where('room_id', request('room_id'))
                     ->where('status', 'current')
                     ->exists()) {
@@ -266,7 +269,7 @@ class ClassroomCrudController extends CrudController
         else {
             $this->crud->entry->room->occupied = false;
         }
-        $this->crud->entry->push(); 
+        $this->crud->entry->push();
 
         return $response;
     }
@@ -336,7 +339,7 @@ class ClassroomCrudController extends CrudController
                 $lecturers = $entry->lecturers->map(function($lecturer) {
                     return ['lecturer_id' => $lecturer->id, 'order' => $lecturer->pivot->order];
                 });
-                $clone->lecturers()->attach($lecturers); 
+                $clone->lecturers()->attach($lecturers);
                 $clonedEntries[] = $clone;
             }
         }

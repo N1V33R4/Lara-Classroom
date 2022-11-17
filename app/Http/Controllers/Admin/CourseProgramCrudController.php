@@ -20,9 +20,14 @@ class CourseProgramCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\BulkCloneOperation;
 
+    //for Clone Multiple Items (Bulk Clone)
+    use \Backpack\CRUD\app\Http\Controllers\Operations\BulkCloneOperation;
+    //Delete Multiple Items (Bulk Delete)
+    use \Backpack\CRUD\app\Http\Controllers\Operations\BulkDeleteOperation;
+
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -34,7 +39,7 @@ class CourseProgramCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -43,16 +48,19 @@ class CourseProgramCrudController extends CrudController
         CRUD::column('name');
         CRUD::column('remark');
 
+        $this->crud->enableExportButtons();//for Export
+        $this->crud->disableResponsiveTable();// for Responsive Table
+
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
          */
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -85,13 +93,13 @@ class CourseProgramCrudController extends CrudController
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         * - CRUD::addField(['name' => 'price', 'type' => 'number']));
          */
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
@@ -105,7 +113,7 @@ class CourseProgramCrudController extends CrudController
         $courses = collect(json_decode(request('courses_list'), true));
 
         $response = $this->traitStore();
-        
+
         $this->crud->entry->courses()->sync($courses);
 
         return $response;
@@ -116,7 +124,7 @@ class CourseProgramCrudController extends CrudController
         $courses = collect(json_decode(request('courses_list'), true));
 
         $response = $this->traitUpdate();
-        
+
         $this->crud->entry->courses()->detach();
         $this->crud->entry->courses()->attach($courses);
 
