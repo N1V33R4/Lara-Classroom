@@ -46,7 +46,7 @@ class StudentCrudController extends CrudController
     {
         CRUD::column('name');
         $this->crud->addColumn([
-            'label' => 'Image',
+            'label' => 'Profile',
             'name' => 'image',
             'type' => 'image',
             'prefix' => 'uploads/',
@@ -80,7 +80,7 @@ class StudentCrudController extends CrudController
         CRUD::field('name');
         $this->crud->addField([
             'name'      => 'image',
-            'label'     => 'Image',
+            'label'     => 'Profile',
             'type'      => 'upload',
             'upload'    => true,
             'disk'      => 'uploads', // if you store files in the /public folder, please omit this; if you store them in /storage or S3, please specify it;
