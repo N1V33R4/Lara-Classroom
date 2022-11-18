@@ -1,44 +1,10 @@
 <!-- This file is used to store sidebar items, starting with Backpack\Base 0.9.0 -->
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="nav-icon la la-home"></i>{{ trans('backpack::base.dashboard') }}</a></li>
 @if (backpack_user()->can(config('permission.admin')) || backpack_user()->can(config('permission.demo')))
-<li class="nav-item nav-dropdown">
-        <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon las la-credit-card"></i>Main Menu</a>
-        <ul class="nav-dropdown-items">
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('page') }}'>
-                                <i class="nav-icon lab la-leanpub"></i>Pages</a></li>
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('section') }}'>
-                                <i class="nav-icon las la-plus-square"></i>Sections</a></li>
-        </ul>
-<li class="nav-item nav-dropdown">
-        <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon las la-bars"></i>Side Menu</a>
-        <ul class="nav-dropdown-items">
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('article') }}'>
-                                <i class="nav-icon las la-newspaper"></i>Articles</a></li>
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('category') }}'>
-                                <i class="nav-icon las la-folder"></i>Categories</a></li>
-        </ul>
-</li>
 
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('gallery') }}'>
-                <i class="nav-icon las la-photo-video"></i>Galleries</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('slideshow') }}'>
-                <i class="nav-icon las la-images"></i>Slideshows</a></li>
-<li class="nav-item nav-dropdown">
-        <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon las la-level-down-alt"></i>Footer</a>
-        <ul class="nav-dropdown-items">
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('footer-column') }}'>
-                                <i class="nav-icon las la-columns"></i>Footer columns</a></li>
-                <li class='nav-item'><a class='nav-link' href='{{ backpack_url('footer-row') }}'>
-                                <i class="nav-icon las la-grip-lines"></i>Footer rows</a></li>
-        </ul>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('setting') }}'>
-                <i class="nav-icon las la-radiation-alt"></i>Settings</a></li>
 @endif
 @if (backpack_user()->can(config('permission.profile')) || backpack_user()->can(config('permission.admin')) || backpack_user()->can(config('permission.demo')))
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('profile') }}'>
-                <i class="nav-icon las la-portrait"></i>Profiles</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('tag') }}'>
-                <i class="nav-icon las la-tags"></i>Tags</a></li>
+
 @endif
 <!-- Super Admin -->
 @if (backpack_user()->id === 1 || backpack_user()->can(config('permission.demo')))
@@ -57,22 +23,46 @@
 </li>
 @endif
 @endif
+
+@if (backpack_user()->can('admin') || backpack_user()->can('room') || backpack_user()->can('shift') || backpack_user()->can('course') || backpack_user()->can('student') || backpack_user()->can('lecturer') || backpack_user()->can('department'))
 <li class="nav-item nav-dropdown">
     <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon las la-adjust"></i>Basic</a>
     <ul class="nav-dropdown-items">
+        @if (backpack_user()->can('admin') || backpack_user()->can('room'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('room') }}'><i class='nav-icon las la-door-open'></i> Rooms</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('shift'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('shift') }}'><i class='nav-icon las la-cloud-sun'></i> Shifts</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('course'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('course') }}'><i class='nav-icon las la-book'></i> Courses</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('student'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('student') }}'><i class='nav-icon las la-portrait'></i> Students</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('lecturer'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('lecturer') }}'><i class='nav-icon las la-graduation-cap'></i> Lecturers</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('department'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('department') }}'><i class='nav-icon las la-university'></i> Departments</a></li>
+        @endif
     </ul>
 </li>
+@endif
+
+@if (backpack_user()->can('admin') || backpack_user()->can('course-program') || backpack_user()->can('student-group') || backpack_user()->can('classroom'))
 <li class="nav-item nav-dropdown">
     <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon las la-chart-pie"></i>Advance</a>
     <ul class="nav-dropdown-items">
+        @if (backpack_user()->can('admin') || backpack_user()->can('course-program'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('course-program') }}'><i class='nav-icon las la-folder-open'></i> Course programs</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('student-group'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('student-group') }}'><i class='nav-icon las la-user-friends'></i> Student groups</a></li>
+        @endif
+        @if (backpack_user()->can('admin') || backpack_user()->can('classroom'))
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('classroom') }}'><i class='nav-icon las la-credit-card'></i> Classrooms</a></li>
+        @endif
     </ul>
 </li>
+@endif
