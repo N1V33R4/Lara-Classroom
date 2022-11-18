@@ -31,4 +31,5 @@ Route::group([
     Route::crud('classroom', 'ClassroomCrudController');
     Route::get('charts/batch', 'Charts\BatchChartController@response')->name('charts.batch.index');
     Route::get('charts/working-hours', 'Charts\WorkingHoursChartController@response')->name('charts.working-hours.index');
+    Route::get('charts/classroom', 'Charts\ClassroomChartController@response')->name('charts.classroom.index');
 }); // this should be the absolute last line of this file
