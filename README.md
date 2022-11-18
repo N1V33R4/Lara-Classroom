@@ -1,11 +1,3 @@
-## Demo
-
-To check out its admin panel use:
-
-Email: demo@majhoolsoft.com
-
-Password: demo
-
 ## Install
 
 1. In your terminal run:
@@ -29,29 +21,10 @@ php artisan migrate
 php artisan db:seed
 ```
 
-<!-- Front-end:
-
-4. Set up your desired (translation) locale by uncommenting corresponding values in config/backpack/crud.php
-
-5. Set up your translation data and sitekey for Google recaptcha in resources/translations.json
-
-6. In your root folder run:
-
-```bash
-npm install
-npx mix --production
-``` -->
-
 ## Usage
 
 1. Your admin panel is available at /admin
 2. After running db:seed you can login with email `admin@admin.admin`, password `admin` as the Super Admin.
-<!-- 
-Note:
-
-1. By default, registration is open only in your local environment. Check out `config/backpack/base.php` to change this and other preferences.
-
-2. Depending on your configuration you may need to define a site within NGINX or Apache; Your URL domain may change from localhost to what you have defined. -->
 
 ## Credits
 
