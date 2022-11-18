@@ -145,9 +145,12 @@ class StudentGroupCrudController extends CrudController
 
     protected function setupShowOperation() {
         CRUD::column('name');
+        CRUD::column('department_id')->type('relationship');
         CRUD::column('batch');
         CRUD::column('year');
         CRUD::column('semester');
+        CRUD::column('classroom_id')->type('relationship');
+        CRUD::column('shift_id')->type('relationship');
         CRUD::column('students_table')->type('table')
             ->label('Students')
             ->columns([
