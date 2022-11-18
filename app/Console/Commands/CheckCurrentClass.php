@@ -48,7 +48,7 @@ class CheckCurrentClass extends Command
         {
             $class->update([ 'status' => 'finished' ]);
             $class->room->update([ 'occupied' => false ]);
-            $class->studentGroups->update([ 'active' => false ]);
+            // $class->studentGroups->update([ 'active' => false ]);
         }
 
         $starting_classes = Classroom::where('status', 'future')
