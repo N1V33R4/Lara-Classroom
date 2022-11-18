@@ -7,11 +7,11 @@ use Backpack\CRUD\app\Http\Controllers\ChartController;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
 /**
- * Class BatchChartController
+ * Class ClassroomChartController
  * @package App\Http\Controllers\Admin\Charts
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class BatchChartController extends ChartController
+class ClassroomChartController extends ChartController
 {
     public function setup()
     {
@@ -22,9 +22,11 @@ class BatchChartController extends ChartController
         $this->chart->labels($labels);
 
         // RECOMMENDED. Set URL that the ChartJS library should call, to get its data using AJAX.
-        $this->chart->load(backpack_url('charts/batch'));
-        
-        $this->chart->displayAxes(false);
+        $this->chart->load(backpack_url('charts/classroom'));
+
+        // OPTIONAL
+        // $this->chart->minimalist(false);
+        // $this->chart->displayLegend(true);
     }
 
     /**
@@ -48,14 +50,11 @@ class BatchChartController extends ChartController
                                         $query->where('status', 'Current')
                                             ->orWhere('status', 'Finished');
                                     })
-                                    ->get('batch')->unique('batch')->count();
+                                    ->count();
         });
 
-        $this->chart->dataset('Classrooms Count', 'pie', [1, 2, 3, 4, 5, 6])
+        $this->chart->dataset('Classrooms Count', 'pie', $data)
             ->color('#333')
             ->backgroundColor($colors);
-        // $this->chart->dataset('ClassroomsCount', 'pie', $data)
-        //     ->color($colors)
-        //     ->backgroundColor('rgba(205, 32, 31, 0.4)');
     }
 }

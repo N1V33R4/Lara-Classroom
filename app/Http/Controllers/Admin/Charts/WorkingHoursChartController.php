@@ -40,10 +40,10 @@ class WorkingHoursChartController extends ChartController
         });
 
         $colors = [];
-        $hue = 0;
+        $hue = 180;
         foreach ($lecturers as $_) {
             $colors[] = "hsl($hue, 75%, 50%)";
-            $hue += 40;
+            $hue += 10;
         }
 
         $data = $data->sortByDesc('hours_worked')->slice(0, 10);
