@@ -64,5 +64,5 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 Yet, for Backpack team it may not be the same for non-commercial use. Please find their corresponding license at [backpackforlaravel.com](https://backpackforlaravel.com/#pricing) for more information.
 
-[link-author]: https://majhoolsoft.com
+[link-author]: https://github.com/majhoolsoft/Ultimate-CMS-for-laboratory-webpage
 [link-backpack]: https://backpackforlaravel.com/
