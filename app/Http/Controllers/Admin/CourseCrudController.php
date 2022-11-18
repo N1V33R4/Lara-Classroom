@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\CourseRequest;
+use App\Models\Department;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -52,6 +53,14 @@ class CourseCrudController extends CrudController
         $this->crud->enableExportButtons();//for Export
         $this->crud->disableResponsiveTable();// for Responsive Table
 
+        CRUD::filter('department_id')
+            ->type('select2')
+            ->values(function() {
+                return Department::all()->keyBy('id')->pluck('name', 'id')->toArray();
+            })
+            ->whenActive(function($value) {
+                $this->crud->addClause('where', 'department_id', $value);
+            })->apply();
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
