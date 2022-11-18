@@ -54,10 +54,7 @@ trait HoursOperation
         $this->data['title'] = $this->crud->getTitle() ?? 'hours '.$this->crud->entity_name;
         $this->data['years'] = $this->data['entry']->classrooms->sortByDesc('start_date')->groupBy(function($val) {
             return Carbon::parse($val->start_date)->format('Y');
-         });
-        // dd($this->data['entry']->classrooms->sortByDesc('start_date')->groupBy(function($val) {
-        //     return Carbon::parse($val->start_date)->format('Y');
-        // }));
+        });
 
         // load the view
         return view("operations.hours", $this->data);
